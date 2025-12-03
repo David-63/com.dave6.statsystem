@@ -1,13 +1,17 @@
+using System;
+using SaveSystem;
 using UnityEngine;
 
 namespace StatSystem
 {
-    public class Attribute : Stat
+    public class Attribute : Stat, ISaveable
     {
         protected int m_CurrentValue;
         public int currentValue { get => m_CurrentValue; private set => m_CurrentValue = value; }
-        public event System.Action CurrentValueChanged;
-        public event System.Action<StatModifier> AppliedModifier;
+
+
+        public event System.Action currentValueChanged;
+        public event System.Action<StatModifier> appliedModifier;
         
         public Attribute(StatDefinition definition) : base(definition)
         {
@@ -36,9 +40,32 @@ namespace StatSystem
             if (currentValue != nextValue)
             {
                 currentValue = nextValue;
-                CurrentValueChanged?.Invoke();
-                AppliedModifier?.Invoke(modifier);
+                currentValueChanged?.Invoke();
+                appliedModifier?.Invoke(modifier);
             }
         }
+
+        #region Save System
+        [Serializable]
+        protected class AttributeData
+        {
+            public int currentValue;
+        }
+
+        public object data => new AttributeData()
+        {
+            currentValue = m_CurrentValue
+        };
+
+
+        public void Load(object data)
+        {
+            AttributeData attributeData = (AttributeData)data;
+            m_CurrentValue = attributeData.currentValue;
+            currentValueChanged?.Invoke();
+        }
+
+        #endregion
+
     }
 }

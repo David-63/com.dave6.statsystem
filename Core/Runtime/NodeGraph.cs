@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Core
 {
-    [CreateAssetMenu(fileName = "NodeGraph", menuName = "Core/NodeGraph")]
+    [CreateAssetMenu(fileName = "NodeGraph", menuName = "DaveAssets/StatSystem/NodeGraph")]
     public class NodeGraph : ScriptableObject
     {
         public CodeFunctionNode rootNode;

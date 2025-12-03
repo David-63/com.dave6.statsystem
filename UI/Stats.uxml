@@ -1,0 +1,94 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Packages/com.dave6.statsystem/Core/Editor/NodeGraphEditorWindow.uss?fileID=7433441132597879392&amp;guid=ea3d28d3802804545a5a95cb436f5186&amp;type=3#NodeGraphEditorWindow" />
+    <ui:VisualElement name="panel" style="flex-grow: 1; width: 25%; position: absolute; padding-top: 1%; padding-right: 1%; padding-bottom: 1%; padding-left: 1%; background-color: rgba(0, 0, 0, 0.72); flex-direction: column; justify-content: flex-start; align-items: stretch;">
+        <ui:VisualElement name="level" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+            <ui:Label text="Level" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+            <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="experience" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between; color: rgb(255, 255, 255);">
+            <ui:Label text="Experience" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+            <ui:Label text="0 / 100" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+        </ui:VisualElement>
+        <ui:VisualElement name="separator" style="flex-grow: 1; height: 6%;" />
+        <ui:VisualElement name="Attributes" style="flex-grow: 1;">
+            <ui:VisualElement name="health" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Health" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:Label text="100 / 100" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+            </ui:VisualElement>
+            <ui:VisualElement name="mana" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Mana" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:Label text="100 / 100" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="separator" style="flex-grow: 1; height: 6%;" />
+        <ui:VisualElement name="primary-stats" style="flex-grow: 1; flex-direction: column; justify-content: space-between;">
+            <ui:VisualElement name="strength" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Strength" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                    <ui:Button text="+" name="increment-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="dexterity" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Dexterity" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                    <ui:Button text="+" name="increment-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="intelligence" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Intelligence" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                    <ui:Button text="+" name="increment-button" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="separator" style="flex-grow: 1; height: 6%;" />
+        <ui:VisualElement name="stats" style="flex-grow: 1;">
+            <ui:VisualElement name="physical-attack" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Physical Attack" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="physical-defense" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Physical Defense" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="movement-speed" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Movement Speed" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="attack-speed" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Attack Speed" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="critical-hit-chance" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Critical Hit Chance" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="critical-hit-multiplier" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Critical Hit Multiplier" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="1" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+            <ui:VisualElement name="separator" style="flex-grow: 1; height: 12%;" />
+            <ui:VisualElement name="stat-points" style="flex-grow: 1; position: relative; flex-direction: row; -unity-text-outline-color: rgb(0, 0, 0); justify-content: space-between;">
+                <ui:Label text="Stat Points" name="label" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                <ui:VisualElement name="content" style="flex-grow: 0; align-self: flex-end; flex-direction: row; justify-content: flex-end;">
+                    <ui:Label text="0" name="value" style="font-size: 16px; color: rgb(255, 255, 255);" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,9 +1,11 @@
+using System;
 using System.Runtime.CompilerServices;
+using SaveSystem;
 
 [assembly: InternalsVisibleTo("StatSystem.Tests")]
 namespace StatSystem
 {
-    public class PrimaryStat : Stat
+    public class PrimaryStat : Stat, ISaveable
     {
         int m_BaseValue;
         public override int baseValue { get => m_BaseValue; protected set => m_BaseValue = value; }
@@ -23,5 +25,27 @@ namespace StatSystem
             baseValue -= amount;
             CalculateValue();
         }
+
+
+        #region Save System
+
+        [Serializable]
+        protected class PrimaryStatData
+        {
+            public int baseValue;
+        }
+        public object data => new PrimaryStatData()
+        {
+            baseValue = m_BaseValue
+        };
+        public void Load(object data)
+        {
+            PrimaryStatData statData = (PrimaryStatData)data;
+            m_BaseValue = statData.baseValue;
+            CalculateValue();
+        }
+
+
+        #endregion
     }
 }

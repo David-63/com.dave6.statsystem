@@ -1,11 +1,7 @@
 {
-    "name": "StatSystem",
-    "rootNamespace": "StatSystem",
-    "references": [
-        "GUID:cdb6893e6eeec8d46827052b04e1b540",
-        "GUID:3a0725c1a46078d44b47cba5ace451be",
-        "GUID:4f53ca11fae400649bd46d4a528f2ed4"
-    ],
+    "name": "SaveSystem",
+    "rootNamespace": "SaveSystem",
+    "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
