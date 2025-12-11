@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d237e49079b1256469dd55068017614b, type: 3}
+  m_Name: EnemyStatDB
+  m_EditorClassIdentifier: StatSystem::Dave6.StatSystem.StatDatabase
+  m_Attributes:
+  - {fileID: 11400000, guid: 5bb4345092ab06a408e268fc2251540c, type: 2}
+  m_SecondaryStat: []
+  m_ResourceStat:
+  - {fileID: 11400000, guid: ec72ac5dc1344174caa25355b07c5b85, type: 2}

@@ -35,13 +35,10 @@ namespace ProtoCode
         {
             IEntity entity = target as IEntity;
             var stat = entity.statHandler.GetHealthStat();
-            //m_Actor.statHandler.ApplyEffect(effectDefinition, stat);
-
             Debug.Log($"Before Effect -> Health: {stat.currentValue}/{stat.finalValue}");
             
             IEntity owner = m_ActorMono as IEntity;
             owner.statHandler.ApplyEffect(effectDefinition, stat);
-
             Debug.Log($"After Effect -> Health: {stat.currentValue}/{stat.finalValue}");
 
             Destroy(gameObject);

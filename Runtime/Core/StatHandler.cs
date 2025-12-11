@@ -114,6 +114,7 @@ namespace Dave6.StatSystem
             return null;
         }
 
+        // 차나리 주요 스텟을 스크립트로 구성해도 괜찬을듯?
         public ResourceStat GetHealthStat()
         {
             if (m_Health != null)
