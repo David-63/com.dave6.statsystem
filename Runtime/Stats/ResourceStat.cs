@@ -10,7 +10,7 @@ namespace Dave6.StatSystem.Stat
         bool _initialFinish = false;
         float m_PreviousFinalValue;
         float m_CurrentValue;
-        public float currentValue => Mathf.Clamp(m_CurrentValue, 0f, finalValue);
+        public float currentValue => m_CurrentValue;
 
         
 
@@ -41,6 +41,9 @@ namespace Dave6.StatSystem.Stat
             return baseValue + totalWeight;
         }
 
+        /// <summary>
+        /// Max 변경시 CurrentValue 값을 보정 해주는 함수
+        /// </summary>
         protected override void AfterValueCalculated()
         {
             if (!_initialFinish) return;
@@ -48,10 +51,11 @@ namespace Dave6.StatSystem.Stat
             // 최대치가 증가한 경우에만 값 보정
             if (m_PreviousFinalValue < finalValue)
             {
-                float ratio = currentValue / m_PreviousFinalValue;
+                float ratio = m_CurrentValue / m_PreviousFinalValue;
                 m_CurrentValue = finalValue * ratio;
             }
             m_PreviousFinalValue = finalValue;
+            ClampCurrentValue();
         }
 
 
@@ -61,48 +65,58 @@ namespace Dave6.StatSystem.Stat
             {
                 case EffectOperationType.Addition:
                     // 현재값 += value
-                    m_CurrentValue += value;
-                    break;
-
+                    m_CurrentValue += value * effect.outputMultiplier;
+                break;
                 case EffectOperationType.Subtraction:
                     // 현재값 -= value
-                    m_CurrentValue -= value;
-                    break;
-
+                    m_CurrentValue -= value * effect.outputMultiplier;
+                break;
                 case EffectOperationType.PercentCurrentIncrease:
-                    // 현재값 *= (1 + 퍼센트)
-                    m_CurrentValue *= (1f + value);
-                    break;
-
+                    {
+                        // 현재값 *= (1 + 퍼센트)
+                        float delta = m_CurrentValue * value;
+                        m_CurrentValue += delta * effect.outputMultiplier;
+                        break;
+                    }
                 case EffectOperationType.PercentCurrentDecrease:
-                    // 현재값 *= (1 - 퍼센트)
-                    m_CurrentValue *= Mathf.Max(0f, 1f - value);
-                    break;
-
+                    {
+                        // 현재값 *= (1 - 퍼센트)
+                        float delta = m_CurrentValue * value;
+                        m_CurrentValue -= delta * effect.outputMultiplier;
+                        break;
+                    }
                 case EffectOperationType.PercentMaxIncrease:
                     // 최대값 증가 → 현재값도 비례 증가시키려면 ratio 조정 필요
                     {
+                        float delta = finalValue * value;
+                        float scaledDelta = delta * effect.outputMultiplier;
+
                         float oldMax = finalValue;
-                        float newMax = oldMax * (1f + value);
+                        float newMax = oldMax + scaledDelta;
 
-                        // 최대치 영향 주는 것이므로 finalValue 재계산이 필요한 구조면
-                        // 여기선 임시로 current를 비례 증가시키는 형태 사용
-                        float ratio = m_CurrentValue / oldMax;
+                        float ratio = oldMax > 0f ? m_CurrentValue / oldMax : 0f;
                         m_CurrentValue = newMax * ratio;
+                        break;
                     }
-                    break;
-
                 case EffectOperationType.PercentMaxDecrease:
                     {
+                        float delta = finalValue * value;
+                        float scaledDelta = delta * effect.outputMultiplier;
+
                         float oldMax = finalValue;
-                        float newMax = oldMax * Mathf.Max(0f, 1f - value);
+                        float newMax = Mathf.Max(0f, oldMax - scaledDelta);
 
-                        float ratio = m_CurrentValue / oldMax;
+                        float ratio = oldMax > 0f ? m_CurrentValue / oldMax : 0f;
                         m_CurrentValue = newMax * ratio;
+                        break;
                     }
-                    break;
             }
+            ClampCurrentValue();
+        }
 
+        void ClampCurrentValue()
+        {
+            m_CurrentValue = Mathf.Clamp(m_CurrentValue, 0f, finalValue);
         }
     }
 }

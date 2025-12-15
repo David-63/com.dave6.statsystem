@@ -46,12 +46,14 @@ namespace Dave6.StatSystem.Effect
         public EffectApplyMode applyMode => m_ApplyMode;
 
         // 전달값 방식 (BaseValueType) | Stat Based, Flat Based 이렇게 구현할수도 있음
-
         [SerializeField] float m_FlatValue;
         public float flatValue => m_FlatValue;
         // 참조 속성
         [SerializeField] List<EffectFormulaSource> m_SourceStats;
         public List<EffectFormulaSource> sourceStats => m_SourceStats;
+        // 배율 추가
+        [SerializeField] float m_OutputMultiplier = 1f;
+        public float outputMultiplier => m_OutputMultiplier;
 
         // 유지시간
         [SerializeField] float m_Duration = -1;
