@@ -15,7 +15,6 @@ namespace Dave6.StatSystem.Effect
         public EffectPreset effectPresets { get; private set; }
 
         BaseContribution m_Contribution; // nullable
-        float m_TotalValue;
 
         Timer m_TimeRemaining;
         float dotDelay = 0.1f;
@@ -31,13 +30,24 @@ namespace Dave6.StatSystem.Effect
             this.definition = definition;
             targetStat = target;
             effectPresets = sources;
-            InitializeEffectValue();
             if (definition.duration != -1)
             {
                 m_TimeRemaining = new Countdown(definition.duration);
                 m_TimeRemaining.OnTimerStop += Dispose;
                 m_TimeRemaining.Start();
             }
+            //InitializeEffectValue();
+        }
+
+        int Evaluate()
+        {
+            float total = definition.flatValue;
+
+            foreach (var pair in effectPresets.sources)
+            {
+                total += pair.sourceStat.finalValue * pair.weight;
+            }
+            return (int)total;
         }
 
         public void InitializeEffectValue()
@@ -47,10 +57,10 @@ namespace Dave6.StatSystem.Effect
             // total값에 각 sourceStat.finalValue * weight 더하기
             foreach (var pair in effectPresets.sources)
             {
-                totalWeight += pair.stat.finalValue * pair.weight;
+                totalWeight += pair.sourceStat.finalValue * pair.weight;
             }
             // 최종 base값 반환
-            m_TotalValue = totalWeight + definition.flatValue;
+            //m_TotalValue = totalWeight + definition.flatValue;
         }
 
         public void OnUpdate()
@@ -71,21 +81,21 @@ namespace Dave6.StatSystem.Effect
             {
                 switch (definition.instant.operationType)
                 {
-                    case EffectOperationType.Current:
-                    applicable.ApplyCurrentValue(definition, m_TotalValue);
+                    case ValueOperationType.Current:
+                    applicable.ApplyCurrentValue(definition, Evaluate());
                     break;
-                    case EffectOperationType.CurrentPercent:
-                    applicable.ApplyCurrentPercent(definition, m_TotalValue);
+                    case ValueOperationType.CurrentPercent:
+                    applicable.ApplyCurrentPercent(definition, Evaluate());
                     break;
-                    case EffectOperationType.MaxPercent:
-                    applicable.ApplyMaxPercent(definition, m_TotalValue);
+                    case ValueOperationType.MaxPercent:
+                    applicable.ApplyMaxPercent(definition, Evaluate());
                     break;
                 }
             }
         }
         public virtual void ApplySustained()
         {
-            m_Contribution = new BaseContribution(definition.sustained.valueType, m_TotalValue);
+            m_Contribution = new BaseContribution(definition.sustained.valueType, Evaluate(), this);
             targetStat.AddBaseContribution(m_Contribution);
         }
 

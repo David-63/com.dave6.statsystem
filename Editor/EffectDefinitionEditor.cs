@@ -13,7 +13,7 @@ namespace Dave6.StatSystemEditor
         bool showSourceType = true;
         SerializedProperty sourceType;
         SerializedProperty flatValue;
-        SerializedProperty sourceStats;
+        SerializedProperty sources;
 
         bool applyModeFoldout = true;
         SerializedProperty applyMode;
@@ -30,7 +30,7 @@ namespace Dave6.StatSystemEditor
             definition = (EffectDefinition)target;
 
             sourceType = serializedObject.FindProperty("sourceType");
-            sourceStats = serializedObject.FindProperty("sourceStats");
+            sources = serializedObject.FindProperty("sources");
             flatValue = serializedObject.FindProperty("flatValue");
 
             applyMode = serializedObject.FindProperty("applyMode");
@@ -49,32 +49,27 @@ namespace Dave6.StatSystemEditor
             serializedObject.Update();
 
             // 이거 이쁨
-            // showSourceType = EditorGUILayout.InspectorTitlebar(showSourceType, definition);
-            // if (showSourceType)
-            // {
-            // }
+            showSourceType = EditorGUILayout.InspectorTitlebar(showSourceType, definition);
+            if (showSourceType)
+            {
+                EditorGUILayout.BeginVertical("box");
+                EditorGUILayout.LabelField("Definition Source", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(sourceType);
+                DrawEffectValue();
+                EditorGUILayout.EndVertical();
+                
+                EditorGUILayout.Space(16);
 
-            EditorGUILayout.BeginVertical("box");
-            //EditorGUILayout.LabelField("Source Type", EditorStyles.boldLabel);
-            EditorGUILayout.LabelField("Definition Source", EditorStyles.boldLabel);
-            EditorGUILayout.PropertyField(sourceType);
-            DrawEffectValue();
-            EditorGUILayout.EndVertical();
-            
-            EditorGUILayout.Space(16);
-
-            EditorGUILayout.BeginVertical("box");
-            EditorGUILayout.LabelField("Payload Setting", EditorStyles.boldLabel);
-            EditorGUILayout.Space(8);
-            EditorGUILayout.PropertyField(applyMode);
-            DrawPayload();            
-            EditorGUILayout.PropertyField(outputMultiplier);
-            EditorGUILayout.EndVertical();
-
-            EditorGUILayout.Space(16);
+                EditorGUILayout.BeginVertical("box");
+                EditorGUILayout.LabelField("Payload Setting", EditorStyles.boldLabel);
+                EditorGUILayout.Space(8);
+                EditorGUILayout.PropertyField(applyMode);
+                DrawPayload();            
+                EditorGUILayout.PropertyField(outputMultiplier);
+                EditorGUILayout.EndVertical();
+            }
 
             
-
 
             serializedObject.ApplyModifiedProperties();
         }
@@ -110,14 +105,14 @@ namespace Dave6.StatSystemEditor
 
         void DrawEffectValue()
         {
-            var source = (EffectSourceType)sourceType.enumValueIndex;
+            var source = (SourceType)sourceType.enumValueIndex;
 
             switch (source)
             {
-                case EffectSourceType.Owner:
-                EditorGUILayout.PropertyField(sourceStats, true);
+                case SourceType.Owner:
+                EditorGUILayout.PropertyField(sources, true);
                 break;
-                case EffectSourceType.Static:
+                case SourceType.Static:
                 EditorGUILayout.PropertyField(flatValue);
                 break;
             }
@@ -153,21 +148,6 @@ namespace Dave6.StatSystemEditor
                     break;
                 }
             }
-        }
-
-        void DrawInstant()
-        {
-            
-        }
-
-        void DrawPeriodic()
-        {
-            
-        }
-
-        void DrawSustained()
-        {
-            
         }
     }
 }

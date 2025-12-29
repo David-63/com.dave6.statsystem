@@ -14,9 +14,9 @@ namespace Dave6.StatSystem
         StatDatabase statDatabase { get; }
         StatHandler statHandler { get; }
 
-        public ResourceStat health { get; set; }
+        public ResourceStat myHealth { get; set; }
 
-        void InitializeStat();
+        void Init_StatHandler();
 
         void CheckHealth();
 
@@ -31,20 +31,13 @@ namespace Dave6.StatSystem
     /// </summary>
     public class StatHandler
     {
-        //[SerializeField] StatDatabase m_StatDatabase;
         StatDatabase m_StatDatabase;
 
-        // StatDatabase SO를 키값으로 씀
-        protected Dictionary<StatDefinition, BaseStat> m_Stats = new();
-        public Dictionary<StatDefinition, BaseStat> stats => m_Stats;
+        public Dictionary<StatTag, BaseStat> statStorage = new();
 
         readonly Dictionary<EffectDefinition, EffectPreset> m_CachedEffectPresets = new();
 
         List<EffectInstance> m_AppliedEffects = new();
-
-        // 채력 스텟 캐싱
-        ResourceStat m_Health;
-
 
         public StatHandler(StatDatabase statDatabase)
         {
@@ -53,34 +46,34 @@ namespace Dave6.StatSystem
 
         public void InitializeStat()
         {
-            // 스텟 생성
-            foreach (StatDefinition definition in m_StatDatabase.attributes)
+            // 스탯 생성
+            foreach (StatBindTag stat in m_StatDatabase.attributeStatTags)
             {
-                m_Stats.Add(definition, new Attribute(definition));
+                statStorage.Add(stat.statTag, new Attribute(stat.statDefinition));
             }
 
-            foreach (StatDefinition definition in m_StatDatabase.secondaryStat)
+            foreach (StatBindTag stat in m_StatDatabase.secondaryStatTags)
             {
-                m_Stats.Add(definition, new SecondaryStat(definition));
+                statStorage.Add(stat.statTag, new SecondaryStat(stat.statDefinition));
             }
 
-            foreach (StatDefinition definition in m_StatDatabase.resourceStat)
+            foreach (StatBindTag stat in m_StatDatabase.resourceStatTags)
             {
-                m_Stats.Add(definition, new ResourceStat(definition));
+                statStorage.Add(stat.statTag, new ResourceStat(stat.statDefinition));
             }
 
-            // Formula 적용
-            foreach (var stat in m_Stats.Values)
+            // formula 적용
+            foreach (var stat in statStorage.Values)
             {
                 // formula를 사용하는 타입의 스텟 (Secondary Stat)
                 if (stat is IDerived derivedStat)
                 {
                     // source를 등록해줘야함
-                    List<SourcePair> sources = new();
+                    List<StatReference> sources = new();
 
                     foreach (var target in stat.definition.formulaStats)
                     {
-                        sources.Add(new(m_Stats[target.key], target.value));
+                        sources.Add(new(statStorage[target.key], target.weight));
                     }
 
                     derivedStat.SetupSources(sources);
@@ -88,7 +81,7 @@ namespace Dave6.StatSystem
             }
 
             // 초기화 진행
-            foreach (var stat in m_Stats.Values)
+            foreach (var stat in statStorage.Values)
             {
                 stat.Initialize();
             }
@@ -114,53 +107,9 @@ namespace Dave6.StatSystem
             }
         }
 
-
-        public BaseStat GetStat(string name)
+        public bool TryGetStat(StatTag key, out BaseStat stat)
         {
-            foreach (var pair in m_Stats)
-            {
-                if (pair.Key.name == name)
-                {
-                    return pair.Value;
-                }
-            }
-            return null;
-        }
-        public BaseStat GetStat(StatDefinition name)
-        {
-            foreach (var pair in m_Stats)
-            {
-                if (pair.Key == name)
-                {
-                    return pair.Value;
-                }
-            }
-            return null;
-        }
-
-        // 차나리 주요 스텟을 스크립트로 구성해도 괜찬을듯?
-        public ResourceStat GetHealthStat()
-        {
-            if (m_Health != null)
-            {
-                return m_Health;
-            }
-            else
-            {
-                foreach (var kv in m_Stats)
-                {
-                    if (kv.Key.name.Contains("R_Health"))
-                    {
-                        m_Health = kv.Value as ResourceStat;
-                        //Debug.Log($"{m_Health}");
-                        return m_Health;
-                    }
-                }
-            }
-
-            Debug.Log("Health가 없거나 네이밍이 'R_Health' 와 다름 ");
-
-            return null;
+            return statStorage.TryGetValue(key, out stat);
         }
 
         public EffectInstance CreateEffectInstance(EffectDefinition definition, BaseStat target)
@@ -193,18 +142,30 @@ namespace Dave6.StatSystem
 
         EffectPreset BuildEffectPreset(EffectDefinition definition)
         {
-            var list = new List<SourcePair>();
+            var list = new List<StatReference>();
 
-            foreach (var tuple in definition.sourceStats)
+            foreach (var tuple in definition.sources)
             {
-                var stat = GetStat(tuple.key.name);
-                if (stat != null)
+                if (statStorage.TryGetValue(tuple.key, out var stat))
                 {
-                    list.Add(new SourcePair(stat, tuple.value));
+                    list.Add(new StatReference(stat, tuple.weight));
                 }
             }
 
             return new EffectPreset(list);
+        }
+
+        public void AddBaseContribution(StatTag targetTag, BaseContribution contribution)
+        {
+            TryGetStat(targetTag, out var target);
+            target?.AddBaseContribution(contribution);
+        }
+
+
+        public void RemoveBaseContribution(StatTag targetTag, object source)
+        {
+            TryGetStat(targetTag, out var target);
+            target?.RemoveBaseContribution(source);
         }
 
 

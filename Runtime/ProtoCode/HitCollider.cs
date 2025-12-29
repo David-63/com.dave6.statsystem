@@ -1,12 +1,14 @@
 using Dave6.StatSystem;
 using Dave6.StatSystem.Effect;
 using Dave6.StatSystem.Interaction;
+using Dave6.StatSystem.Stat;
 using UnityEngine;
 
 namespace ProtoCode
 {
     public class HitCollider : MonoBehaviour, IStatInvoker
     {
+        [SerializeField] StatTag m_TargetStatTag;
         [SerializeField] EffectDefinition m_EffectDefinition;
         public EffectDefinition effectDefinition => m_EffectDefinition;
 
@@ -33,16 +35,11 @@ namespace ProtoCode
         public void Invoke<T>(T target) where T : Component, IStatReceiver
         {
             IStatController entity = target as IStatController;
-            var stat = entity.statHandler.GetHealthStat();
+            var isFail = entity.statHandler.TryGetStat(m_TargetStatTag, out var health);
+            if (isFail) return;
 
             //m_Actor.statHandler.ApplyInstantEffect(effectDefinition, stat);
-            m_Actor.statHandler.CreateEffectInstance(effectDefinition, stat);
-            Debug.Log($"target Helth: {stat.currentValue}/{stat.finalValue}");
-
-            if (stat.currentValue <= 0)
-            {
-                Destroy(target.gameObject);
-            }
+            m_Actor.statHandler.CreateEffectInstance(effectDefinition, health);
         }
     }
 }

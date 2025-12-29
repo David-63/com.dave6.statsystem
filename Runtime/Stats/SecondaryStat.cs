@@ -5,23 +5,31 @@ namespace Dave6.StatSystem.Stat
 {
     public class SecondaryStat : BaseStat, IDerived
     {
-        List<SourcePair> m_SourceStats;        
-        public List<SourcePair> sources => m_SourceStats;
+        public List<StatReference> sources { get; private set; } = new();
         public SecondaryStat(StatDefinition definition) : base(definition) { }
 
-        public void SetupSources(List<SourcePair> sourceStats) => m_SourceStats = sourceStats;
+        public void SetupSources(List<StatReference> sourceStats)
+        {
+            sources = sourceStats;
+
+            foreach (var pair in sources)
+            {
+                pair.sourceStat.onValueChanged += MarkDirty;
+            }
+            MarkDirty();
+        }
 
         protected override int CalculateBaseInternal()
         {
-            int totalWeight = 0;
+            int totalWeight = baseValue;
 
             // total값에 각 sourceStat.finalValue * weight 더하기
-            foreach (var pair in m_SourceStats)
+            foreach (var pair in sources)
             {
-                totalWeight += (int)(pair.stat.finalValue * pair.weight);
+                totalWeight += (int)(pair.sourceStat.finalValue * pair.weight);
             }
             // 최종 base값 반환
-            return baseValue + totalWeight;
+            return totalWeight;
         }
     }
 }

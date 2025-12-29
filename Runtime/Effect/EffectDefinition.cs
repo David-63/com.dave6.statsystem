@@ -8,7 +8,7 @@ namespace Dave6.StatSystem.Effect
 
     #region Effect Enum 정의
     [Serializable]
-    public enum EffectOperationType
+    public enum ValueOperationType
     {
         Current,
         CurrentPercent,
@@ -18,17 +18,10 @@ namespace Dave6.StatSystem.Effect
 //==========================================================================
 
     [Serializable]
-    public enum EffectSourceType
+    public enum SourceType
     {
         Owner,      // 시전자, 공격자
         Static      // 맵, 트랩, 아이템
-    }
-
-    [Serializable]
-    public struct EffectFormulaSource
-    {
-        public StatDefinition key;  // 어떤 스탯에 의존?
-        public float value;         // 얼마나 영향을 주는지
     }
 
 
@@ -45,13 +38,13 @@ namespace Dave6.StatSystem.Effect
     [Serializable]
     public class InstantPayload
     {
-        public EffectOperationType operationType;
+        public ValueOperationType operationType;
     }
     
     [Serializable]
     public class PeriodicPayload
     {
-        public EffectOperationType operationType;
+        public ValueOperationType operationType;
         public float tickInterval = 0.1f;
     }
 
@@ -63,12 +56,12 @@ namespace Dave6.StatSystem.Effect
 
     #endregion
 
-    [CreateAssetMenu(fileName = "EffectDefinitionTest", menuName = "DaveAssets/StatSystem/EffectDefinitionTest")]
+    [CreateAssetMenu(fileName = "EffectDefinition", menuName = "DaveAssets/StatSystem/Effect/EffectDefinition")]
     public class EffectDefinition : ScriptableObject
     {
-        public EffectSourceType sourceType;
+        public SourceType sourceType;
         public float flatValue;
-        public List<EffectFormulaSource> sourceStats;
+        public List<DerivedStatSource> sources;
 
         public EffectApplyMode applyMode;
         public InstantPayload instant;

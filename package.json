@@ -1,6 +1,6 @@
 {
   "name": "com.dave6.stat-system",
-  "version": "0.0.9",
+  "version": "0.1.0",
   "displayName": "Dave Stat System",
   "description": "A modular stat system for Unity projects",
   "unity": "6.1",

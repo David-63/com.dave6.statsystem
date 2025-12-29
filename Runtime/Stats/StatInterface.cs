@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Dave6.StatSystem.Effect;
 using Dave6.StatSystem.Stat;
@@ -6,12 +7,12 @@ namespace Dave6.StatSystem.Stat
 {
     public interface IDerived
     {
-        List<SourcePair> sources { get; }
+        List<StatReference> sources { get; }
 
         /// <summary>
         /// Definition 에 담긴 formulaStat의 타입과 일치하는 인스턴스 스텟 리스트를 연결
         /// </summary>
-        void SetupSources(List<SourcePair> sources);
+        void SetupSources(List<StatReference> sources);
     }
 
     public interface IEffectApplicable
@@ -21,14 +22,34 @@ namespace Dave6.StatSystem.Stat
         void ApplyMaxPercent(EffectDefinition effect, float value);
     }
 
-    public struct SourcePair
+    /// <summary>
+    /// DB에서 사용하는 매핑 클래스
+    /// </summary>
+    [Serializable]
+    public class StatBindTag
     {
-        public readonly BaseStat stat;
+        public StatTag statTag;
+        public StatDefinition statDefinition;
+    }
+
+    /// <summary>
+    /// 참조할 스텟의 key와 weight 정보가 담겨있음
+    /// </summary>
+    [Serializable]
+    public struct DerivedStatSource
+    {
+        public StatTag key;  // 어떤 스탯에 의존?
+        public float weight;         // 얼마나 영향을 주는지
+    }
+
+    public readonly struct StatReference
+    {
+        public readonly BaseStat sourceStat;
         public readonly float weight;
 
-        public SourcePair(BaseStat stat, float weight)
+        public StatReference(BaseStat sourceStat, float weight)
         {
-            this.stat = stat;
+            this.sourceStat = sourceStat;
             this.weight = weight;
         }
     }
@@ -38,12 +59,11 @@ namespace Dave6.StatSystem.Stat
     /// </summary>
     public class EffectPreset
     {
-        readonly List<SourcePair> m_Sources;
-        public IReadOnlyList<SourcePair> sources => m_Sources;
+        public readonly IReadOnlyList<StatReference> sources;
 
-        public EffectPreset(IEnumerable<SourcePair> sources)
+        public EffectPreset(IEnumerable<StatReference> sources)
         {
-            m_Sources = new List<SourcePair>(sources);
+            this.sources = new List<StatReference>(sources);
         }
     }
 

@@ -16,7 +16,7 @@ namespace ProtoCode
         StatHandler m_StatHandler;
         public StatHandler statHandler => m_StatHandler;
 
-        public ResourceStat health { get; set; }
+        public ResourceStat myHealth { get; set; }
 
 
         // 디버깅 이후에 사리질 수 있음
@@ -25,10 +25,10 @@ namespace ProtoCode
 
         void Awake()
         {
-            InitializeStat();
+            Init_StatHandler();
         }
 
-        public void InitializeStat()
+        public void Init_StatHandler()
         {
             m_StatHandler = new StatHandler(m_StatDatabase);
             m_StatHandler.InitializeStat();

@@ -15,11 +15,11 @@ namespace Dave6.StatSystem.Stat
         public event Action onCurrentValueChanged;
         
 
-        List<SourcePair> m_SourceStats;        
-        public List<SourcePair> sources => m_SourceStats;
+        List<StatReference> m_SourceStats;        
+        public List<StatReference> sources => m_SourceStats;
 
         public ResourceStat(StatDefinition definition) : base(definition) { }
-        public void SetupSources(List<SourcePair> sourceStats) => m_SourceStats = sourceStats;
+        public void SetupSources(List<StatReference> sourceStats) => m_SourceStats = sourceStats;
 
         public override void Initialize()
         {
@@ -36,7 +36,7 @@ namespace Dave6.StatSystem.Stat
             // total값에 각 sourceStat.finalValue * weight 더하기
             foreach (var pair in m_SourceStats)
             {
-                totalWeight += (int)(pair.stat.finalValue * pair.weight);
+                totalWeight += (int)(pair.sourceStat.finalValue * pair.weight);
             }
             // 최종 base값 반환
             return baseValue + totalWeight;
@@ -45,18 +45,18 @@ namespace Dave6.StatSystem.Stat
         /// <summary>
         /// Max 변경시 CurrentValue 값을 보정 해주는 함수
         /// </summary>
-        protected override void AfterValueCalculated()
+        protected override void AfterValueCalculated(int final)
         {
             if (!_initialFinish) return;
 
             // 최대치가 증가한 경우에만 값 보정
-            if (m_PreviousFinalValue < finalValue)
+            if (m_PreviousFinalValue < final)
             {
                 float ratio = m_CurrentValue / m_PreviousFinalValue;
-                m_CurrentValue = finalValue * ratio;
+                m_CurrentValue = final * ratio;
             }
-            m_PreviousFinalValue = finalValue;
-            ClampCurrentValue();
+            m_PreviousFinalValue = final;
+            ClampCurrentValue(final);
         }
 
 
@@ -64,7 +64,7 @@ namespace Dave6.StatSystem.Stat
         {
             m_CurrentValue += value * effect.outputMultiplier;
             onCurrentValueChanged?.Invoke();
-            ClampCurrentValue();
+            ClampCurrentValue(finalValue);
         }
         public void ApplyCurrentPercent(EffectDefinition effect, float value)
         {
@@ -72,7 +72,7 @@ namespace Dave6.StatSystem.Stat
             float delta = m_CurrentValue * value;
             m_CurrentValue += delta * effect.outputMultiplier;
             onCurrentValueChanged?.Invoke();
-            ClampCurrentValue();
+            ClampCurrentValue(finalValue);
         }
         public void ApplyMaxPercent(EffectDefinition effect, float value)
         {
@@ -86,12 +86,12 @@ namespace Dave6.StatSystem.Stat
             float ratio = oldMax > 0f ? m_CurrentValue / oldMax : 0f;
             m_CurrentValue = newMax * ratio;
             onCurrentValueChanged?.Invoke();
-            ClampCurrentValue();
+            ClampCurrentValue(newMax);
         }
 
-        void ClampCurrentValue()
+        void ClampCurrentValue(float max)
         {
-            m_CurrentValue = Mathf.Clamp(m_CurrentValue, 0f, finalValue);
+            m_CurrentValue = Mathf.Clamp(m_CurrentValue, 0f, max);
         }
 
         public void ResetCurrentValue() => m_CurrentValue = finalValue;

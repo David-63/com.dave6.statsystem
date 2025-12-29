@@ -9,12 +9,33 @@ namespace Dave6.StatSystem.Stat
     {
         public StatDefinition definition { get; private set; }
         public int baseValue { get; private set; }
-        public int finalValue { get; private set; }
 
         /// <summary>
         /// UI, 애니메이션, 사운드, 효과, 기타 시스템에 이벤트 전달
         /// </summary>
         public event Action onValueChanged;
+
+        #region Dirty flag 패턴
+        bool isDirty = true;
+        int m_FinalValue;
+        public int finalValue
+        {
+            get
+            {
+                if (isDirty) CalculateValue();
+                return m_FinalValue;
+            }
+            private set => m_FinalValue = value;
+        }
+
+        public void MarkDirty()
+        {
+            if (isDirty) return;
+            isDirty = true;
+            onValueChanged?.Invoke();
+        }
+        #endregion
+
 
         protected List<BaseContribution> m_BaseContributions = new();
 
@@ -35,18 +56,10 @@ namespace Dave6.StatSystem.Stat
         /// </summary>
         public void CalculateValue()
         {
-            // ======================================================================
-            // # Base 값 구하기 #
             int calcBase = CalculateBaseInternal();
-
-            // ======================================================================
-            // # Modifier 계산 #
             CalculateFinalValue(calcBase);
-
-            // ======================================================================
-            // # current 비율 적용 #
-            AfterValueCalculated();
-
+            AfterValueCalculated(m_FinalValue);
+            isDirty = false;
         }
 
         /// <summary>
@@ -88,17 +101,21 @@ namespace Dave6.StatSystem.Stat
         /// <summary>
         /// CurrentValue 계산이 필요한 경우에 구현
         /// </summary>
-        protected virtual void AfterValueCalculated() { }
+        protected virtual void AfterValueCalculated(int final) { }
 
         public void AddBaseContribution(BaseContribution contribution)
         {
+            MarkDirty();
             m_BaseContributions.Add(contribution);
+            onValueChanged?.Invoke();
             CalculateValue();
         }
         
-        public void RemoveBaseContribution(BaseContribution contribution)
+        public void RemoveBaseContribution(object source)
         {
-            if (m_BaseContributions.Remove(contribution))
+            MarkDirty();
+            m_BaseContributions.RemoveAll(c => c.source == source);
+            onValueChanged?.Invoke();
             CalculateValue();
         }
     }
